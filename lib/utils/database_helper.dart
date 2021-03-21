@@ -16,6 +16,7 @@ class DatabaseHelper {
   String colDate = 'date';
 
   DatabaseHelper._createInstance(); // named constructor to create instance of DatabaseHelper
+  //! why are the steps within _createInstance not specified???
 
   factory DatabaseHelper() {
     if (_databaseHelper == null) {
@@ -25,6 +26,8 @@ class DatabaseHelper {
     return _databaseHelper; // returns the Singleton
   }
 
+  //! what is the difference between databasehelper and database???
+  //! why should the getter be able to create the database if none exist???
   Future<Database> get database async {
     if (_database == null) {
       _database = await initializeDatabase();
@@ -90,5 +93,17 @@ class DatabaseHelper {
         await db.rawQuery('SELECT COUNT (*) from $noteTable');
     int result = Sqflite.firstIntValue(x);
     return result;
+  }
+
+  // Get the 'Map List' [ List<Map> ] and convert it to 'Note List' [ List<Note> ]
+  Future<List<Note>> getNoteList() async {
+    var noteMapList = await getNoteMapList(); // Get 'Map List' from database
+    int count = noteMapList.length;
+
+    List<Note> noteList = List<Note>();
+    for (int i = 0; i < count; i++) {
+      noteList.add(Note.fromMapObject(noteMapList[i]));
+    }
+    return noteList;
   }
 }
